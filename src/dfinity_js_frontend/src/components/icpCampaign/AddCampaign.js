@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Modal, Form, FloatingLabel } from "react-bootstrap";
+import { campaignFactory } from "../../utils/icpCampaign";
 
-const AddProduct = ({ save }) => {
+const AddCampaign = ({ save }) => {
   const [title, setTitle] = useState("");
-  const [attachmentURL, setImage] = useState("");
-  const [description, setDescription] = useState("");
-  const [location, setLocation] = useState("");
-  const [price, setPrice] = useState(0);
-  const isFormFilled = () => title && attachmentURL && description && location && price;
+  const [imageUrl, setImage] = useState("");
+  const [desc, setDesc] = useState("");
+  const [minDonation, setMinDonation] = useState(0);
+  const isFormFilled = () => title && imageUrl && desc && minDonation;
 
   const [show, setShow] = useState(false);
 
@@ -23,7 +23,7 @@ const AddProduct = ({ save }) => {
         className="rounded-pill px-0"
         style={{ width: "38px" }}
       >
-        <i class="bi bi-plus"></i>
+        <i className="bi bi-plus"></i>
       </Button>
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
@@ -33,7 +33,7 @@ const AddProduct = ({ save }) => {
           <Modal.Body>
             <FloatingLabel
               controlId="inputName"
-              label="Product title"
+              label="Campaign Title"
               className="mb-3"
             >
               <Form.Control
@@ -41,7 +41,7 @@ const AddProduct = ({ save }) => {
                 onChange={(e) => {
                   setTitle(e.target.value);
                 }}
-                placeholder="Enter title of product"
+                placeholder="Enter title of Campaign"
               />
             </FloatingLabel>
             <FloatingLabel
@@ -57,43 +57,28 @@ const AddProduct = ({ save }) => {
                 }}
               />
             </FloatingLabel>
-            <FloatingLabel
-              controlId="inputDescription"
-              label="Description"
-              className="mb-3"
-            >
+            <FloatingLabel controlId="inputdesc" label="desc" className="mb-3">
               <Form.Control
                 as="textarea"
-                placeholder="description"
+                placeholder="Description"
                 style={{ height: "80px" }}
                 onChange={(e) => {
-                  setDescription(e.target.value);
+                  setDesc(e.target.value);
                 }}
               />
             </FloatingLabel>
             <FloatingLabel
-              controlId="inputLocation"
-              label="Location"
+              controlId="inputminDonation"
+              label="minDonation"
               className="mb-3"
             >
               <Form.Control
                 type="text"
-                placeholder="Location"
+                placeholder="Minimum Donation"
                 onChange={(e) => {
-                  setLocation(e.target.value);
-                }}
-              />
-            </FloatingLabel>
-            <FloatingLabel
-              controlId="inputPrice"
-              label="Price"
-              className="mb-3"
-            >
-              <Form.Control
-                type="text"
-                placeholder="Price"
-                onChange={(e) => {
-                  setPrice(e.target.value);
+                  setMinDonation(
+                    e.target.value
+                  );
                 }}
               />
             </FloatingLabel>
@@ -109,15 +94,14 @@ const AddProduct = ({ save }) => {
             onClick={() => {
               save({
                 title,
-                attachmentURL,
-                description,
-                location,
-                price,
+                imageUrl,
+                desc,
+                minDonation,
               });
               handleClose();
             }}
           >
-            Save product
+            Add Campaign
           </Button>
         </Modal.Footer>
       </Modal>
@@ -125,8 +109,8 @@ const AddProduct = ({ save }) => {
   );
 };
 
-AddProduct.propTypes = {
+AddCampaign.propTypes = {
   save: PropTypes.func.isRequired,
 };
 
-export default AddProduct;
+export default AddCampaign;

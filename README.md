@@ -7,7 +7,7 @@ Authentication is managed by the **Internt Identity** canister, while transactio
 
 
 ## How it works
-Anyone can create and donate to campaigns. However, campaign creators cannot donate to their own campaigns. When campaigns are created, they have a `Maximum Time To Live` of seven (7) days, after which they are deactivated. Deactivated campaigns cannot be donated to.
+Anyone can create and donate to campaigns. However, campaign creators cannot donate to their own campaigns. When campaigns are created, they have a `Maximum Time To Live` of seven (7) days, after which they are deactivated. Deactivated campaigns cannot be donated to. A Campaign has a **minimum donation** amount, but can accept donations above or equal to that amount, but not below it.
 
 ## How to run the DApp
 

@@ -22,16 +22,11 @@ import {
   hexAddressFromPrincipal,
 } from "azle/canisters/ledger";
 
-/* @ts-ignore */
+/* Import hashcode and uuid libraries */
 import { hashCode } from "hashcode";
 import { v4 as uuidv4 } from "uuid";
 
-/**
- *
- * Records and Variants
- *
- */
-
+/* Define Records and Variants */
 const Campaign = Record({
   id: text,
   title: text,
@@ -73,46 +68,20 @@ const Message = Variant({
   DonationCompleted: text,
 });
 
-/**
- *
- * Storage and Constants
- *
- */
-
+/* Define Storage and Constants */
 const campaignStorage = StableBTreeMap(0, text, Campaign);
 const donationStorage = StableBTreeMap(0, text, Donation);
-
 const CAMPAIGN_TTL = 604800n;
 
-/**
- *
- * ICP Canister Initialization
- *
- */
-
+/* Initialize ICP Canister */
 const icpCanister = Ledger(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"));
 
-/**
- *
- * Canister Functions
- *
- */
-
+/* Define Canister Functions */
 export default Canister({
-  /**
-   *
-   * Get all Campaigns
-   *
-   */
-
+  // Get all Campaigns
   getCampaigns: query([], Vec(Campaign), () => campaignStorage.values()),
 
-  /**
-   *
-   * Get a single Campaign
-   *
-   */
-
+  // Get a single Campaign
   getCampaign: query([text], Result(Campaign, Message), (id) => {
     const campaignOpt = campaignStorage.get(id);
 
@@ -122,20 +91,17 @@ export default Canister({
     return Ok(campaignOpt.Some);
   }),
 
-  /**
-   *
-   * Create a Campaign
-   *
-   */
-
+  // Create a Campaign
   createCampaign: update(
     [CampaignPayload],
     Result(Campaign, Message),
     (payload) => {
-      if (!(typeof payload === "object" || Object.keys(payload).length === 4)) {
+      // Validate payload
+      if (Object.keys(payload).length !== 4) {
         return Err({ InvalidPayload: "Invalid Payload Object" });
       }
 
+      // Create campaign object
       const campaign = {
         ...payload,
         id: uuidv4(),
@@ -145,45 +111,40 @@ export default Canister({
         numOfDonations: 0n,
       };
 
+      // Store campaign
       campaignStorage.insert(campaign.id, campaign);
-      // mark campaign as inactive as the TTL elaspses
+
+      // Schedule campaign deactivation
       deactivateByTimeout(campaign.id, CAMPAIGN_TTL);
       return Ok(campaign);
     }
   ),
 
-  /**
-   *
-   * Update Campaign
-   *
-   */
-
+  // Update Campaign
   updateCampaign: update(
     [text, CampaignPayload],
     Result(Campaign, Message),
     (id, payload) => {
-      if (!(typeof payload === "object" || Object.keys(payload).length === 0)) {
+      // Validate payload
+      if (Object.keys(payload).length === 0) {
         return Err({ InvalidPayload: "Invalid Payload Object" });
       }
 
+      // Get campaign
       const campaignOpt = campaignStorage.get(id);
 
       if ("None" in campaignOpt) {
         return Err({ NotFound: `Campaign with id=${id} not found` });
       }
 
+      // Update campaign
       const updatedCampaign = { ...campaignOpt.Some, ...payload };
       campaignStorage.insert(id, updatedCampaign);
       return Ok(updatedCampaign);
     }
   ),
 
-  /**
-   *
-   * Delete Campaign
-   *
-   */
-
+  // Delete Campaign
   deleteCampaign: update([text], Result(text, Message), (id) => {
     const campaignOpt = campaignStorage.get(id);
 
@@ -195,12 +156,7 @@ export default Canister({
     return Ok("Deleted campaign with id=" + campaignOpt.Some.id);
   }),
 
-  /**
-   *
-   * Toggle campaign active status
-   *
-   */
-
+  // Toggle campaign active status
   toggleCampaignActiveStatus: update([text], Result(text, Message), (id) => {
     const campaignOpt = campaignStorage.get(id);
 
@@ -221,20 +177,10 @@ export default Canister({
     );
   }),
 
-  /**
-   *
-   * Get Donations
-   *
-   */
-
+  // Get Donations
   getDonations: query([], Vec(Donation), () => donationStorage.values()),
 
-  /**
-   *
-   * Get a Donation
-   *
-   */
-
+  // Get a Donation
   getDonation: query([text], Result(Donation, Message), (id) => {
     const donationOpt = campaignStorage.get(id);
 
@@ -245,12 +191,7 @@ export default Canister({
     return Ok(donationOpt.Some);
   }),
 
-  /**
-   *
-   * Create a memo for Donation
-   *
-   */
-
+  // Create a memo for Donation
   createDonationMemo: update([text], Result(nat64, Message), (campaignId) => {
     if (typeof campaignId !== "string") {
       return Err({ InvalidPayload: "Invalid payload" });
@@ -259,12 +200,7 @@ export default Canister({
     return Ok(memo);
   }),
 
-  /**
-   *
-   * Make a Donation
-   *
-   */
-
+  // Make a Donation
   donateToCampaign: update(
     [DonationPayload],
     Result(Donation, Message),
@@ -308,18 +244,13 @@ export default Canister({
     }
   ),
 
+  // Get Address from Principal
   getAddressFromPrincipal: query([Principal], text, (principal) => {
     return hexAddressFromPrincipal(principal, 0);
   }),
 });
 
-/**
- *
- * Helper Functions
- *
- */
-
-// used to change a campaign by timeout
+// Helper function to deactivate a campaign by timeout
 function deactivateByTimeout(id: text, delay: Duration) {
   ic.setTimer(delay, () => {
     const campaign = campaignStorage.get(id);
@@ -330,7 +261,7 @@ function deactivateByTimeout(id: text, delay: Duration) {
   });
 }
 
-/* used to verify icp transfers */
+// Function to verify ICP transfers
 async function verifyPaymentInternal(
   sender: Principal,
   amount: nat64,
@@ -362,9 +293,7 @@ async function verifyPaymentInternal(
   return tx ? true : false;
 }
 
-/*
-    a hash function that is used to generate correlation ids for orders.
-*/
+// Hash function for generating correlation ids
 function hash(input: any): nat64 {
   return BigInt(Math.abs(hashCode().value(input)));
 }

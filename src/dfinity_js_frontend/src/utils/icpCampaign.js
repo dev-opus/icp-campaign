@@ -88,6 +88,7 @@ export const campaignFactory = {
       const result = await window.canister.icpCampaign.getDonations();
       return result;
     } catch (error) {
+      console.log({error})
       if (err.name === "AgentHTTPResponseError") {
         const authClient = window.auth.client;
         await authClient.logout();

@@ -18,7 +18,7 @@ function Donations() {
       setLoading(true);
       setDonations(await campaignFactory.getDonations());
     } catch (error) {
-      console.log({ error });
+      console.log({ error, from:'donations' });
     } finally {
       setLoading(false);
     }

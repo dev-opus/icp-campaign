@@ -217,7 +217,7 @@ export default Canister({
     const word = updatedCampaign.isActive ? "activated" : "deactivated";
 
     return Ok(
-      "Campaign with title=" + campaignOpt.Some.title + " is now " + word
+      `Campaign with title "${campaignOpt.Some.title}" is now ${word}`
     );
   }),
 

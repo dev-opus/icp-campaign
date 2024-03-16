@@ -1,6 +1,6 @@
 # ICP Campaign Platform
 
-This smart contract DApp built on the **Internet Computer Platform** using TypeScript and the Azle framework.
+This smart contract DApp is built on the **Internet Computer Platform** using TypeScript and the Azle framework.
 The frontend is built using the React.js web UI library.
 
 Authentication is managed by the **Internet Identity** canister, while transactions are managed by the **Ledger** canister. 

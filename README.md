@@ -3,7 +3,7 @@
 This smart contract DApp built on the **Internet Computer Platform** using TypeScript and the Azle framework.
 The frontend is built using the React.js web UI library.
 
-Authentication is managed by the **Internt Identity** canister, while transactions are managed by the **Ledger** canister. 
+Authentication is managed by the **Internet Identity** canister, while transactions are managed by the **Ledger** canister. 
 
 
 ## How it works
@@ -35,7 +35,7 @@ Anyone can create and donate to campaigns. However, campaign creators cannot don
 	npm run gen-deploy:local
 ```
 
-After the deployments, visit the url in the terminak that looks the one below
+After the deployments, visit the url in the terminal that looks like the one below
 
 ```
 URLs:
